@@ -1,11 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ImageUp, PenLine, Upload } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EventCard } from "@/components/EventCard";
-import { upcomingEvents } from "@/lib/events";
+import { eventsQueryOptions, upcomingEvents } from "@/lib/events";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,7 +32,10 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const coming = upcomingEvents().slice(0, 3);
+  const navigate = useNavigate();
+  const { data: events = [] } = useQuery(eventsQueryOptions);
+  const coming = upcomingEvents(events).slice(0, 3);
+
 
   const handleFiles = (files: FileList | null) => {
     const file = files?.[0];
@@ -92,7 +97,8 @@ function Index() {
             Upload screenshot
           </Button>
           <button
-            onClick={() => toast("Manual entry coming soon")}
+            onClick={() => navigate({ to: "/events/new" })}
+
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
             <PenLine className="h-3.5 w-3.5" />
@@ -115,10 +121,15 @@ function Index() {
           </Link>
         </div>
         <div className="mt-3 space-y-3">
-          {coming.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
+          {coming.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+              Nothing saved yet — add your first event.
+            </p>
+          ) : (
+            coming.map((event) => <EventCard key={event.id} event={event} />)
+          )}
         </div>
+
       </section>
     </AppShell>
   );

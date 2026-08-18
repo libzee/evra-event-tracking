@@ -1,35 +1,33 @@
-import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, CalendarDays, Clock, MapPin, Pencil, Ticket, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { formatFullDate, formatTime, getEvent } from "@/lib/events";
-import screenshot from "@/assets/event-screenshot.jpg";
+import {
+  deleteEvent,
+  displayLocation,
+  displayTime,
+  eventQueryOptions,
+  formatDateTime,
+  formatFullDate,
+} from "@/lib/events";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/events/$eventId")({
-  loader: ({ params }) => {
-    const event = getEvent(params.eventId);
-    if (!event) throw notFound();
-    return { event };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return {
-        meta: [{ title: "Event not found — evra" }, { name: "robots", content: "noindex" }],
-      };
-    }
-    const title = `${loaderData.event.name} — evra`;
-    const description = `${formatFullDate(loaderData.event.start)} · ${loaderData.event.location}`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      { title: "Event details — evra" },
+      { name: "description", content: "Date, time, location and notes for your saved event." },
+      { property: "og:title", content: "Event details — evra" },
+      {
+        property: "og:description",
+        content: "Date, time, location and notes for your saved event.",
+      },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: EventDetail,
 });
 
@@ -46,8 +44,20 @@ function Row({ icon, label, value }: { icon: ReactNode; label: string; value: st
 }
 
 function EventDetail() {
-  const { event } = Route.useLoaderData();
+  const { eventId } = Route.useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data: event, isLoading } = useQuery(eventQueryOptions(eventId));
+
+  const removeEvent = useMutation({
+    mutationFn: () => deleteEvent(eventId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["events"] });
+      toast.success("Event deleted");
+      navigate({ to: "/events" });
+    },
+    onError: () => toast.error("Couldn't delete that event."),
+  });
 
   return (
     <AppShell>
@@ -59,76 +69,82 @@ function EventDetail() {
         All events
       </Link>
 
-      <h1 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">{event.name}</h1>
+      {isLoading ? (
+        <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
+      ) : !event ? (
+        <p className="mt-6 text-sm text-muted-foreground">That event no longer exists.</p>
+      ) : (
+        <>
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+            {event.event_name}
+          </h1>
 
-      <div className="mt-5 rounded-2xl border border-border bg-card px-4">
-        <Row
-          icon={<CalendarDays className="h-4 w-4" />}
-          label="Date"
-          value={formatFullDate(event.start)}
-        />
-        <Row
-          icon={<Clock className="h-4 w-4" />}
-          label="Time"
-          value={
-            event.end
-              ? `${formatTime(event.start)} – ${formatTime(event.end)}`
-              : formatTime(event.start)
-          }
-        />
-        <Row icon={<MapPin className="h-4 w-4" />} label="Location" value={event.location} />
-        <Row
-          icon={<Ticket className="h-4 w-4" />}
-          label="Ticket release"
-          value={event.ticketRelease ?? "Not tracked"}
-        />
-        <Row
-          icon={<CalendarDays className="h-4 w-4" />}
-          label="Registration deadline"
-          value={event.registrationDeadline ?? "None"}
-        />
-      </div>
+          <div className="mt-5 rounded-2xl border border-border bg-card px-4">
+            <Row
+              icon={<CalendarDays className="h-4 w-4" />}
+              label="Date"
+              value={`${formatFullDate(event.start_date)}${
+                event.end_date ? ` – ${formatFullDate(event.end_date)}` : ""
+              }${event.date_is_estimated ? " (estimated)" : ""}`}
+            />
+            <Row icon={<Clock className="h-4 w-4" />} label="Time" value={displayTime(event)} />
+            <Row
+              icon={<MapPin className="h-4 w-4" />}
+              label="Location"
+              value={displayLocation(event)}
+            />
+            <Row
+              icon={<Ticket className="h-4 w-4" />}
+              label="Ticket release"
+              value={formatDateTime(event.ticket_release_datetime) ?? "Not tracked"}
+            />
+            <Row
+              icon={<CalendarDays className="h-4 w-4" />}
+              label="Registration deadline"
+              value={formatDateTime(event.registration_deadline) ?? "None"}
+            />
+          </div>
 
-      <section className="mt-6">
-        <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          Notes
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-foreground">
-          {event.notes ?? "No notes yet."}
-        </p>
-      </section>
+          <section className="mt-6">
+            <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+              Notes
+            </h2>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">
+              {event.notes ?? "No notes yet."}
+            </p>
+          </section>
 
-      <section className="mt-6">
-        <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          Original screenshot
-        </h2>
-        <img
-          src={screenshot}
-          alt={`Screenshot saved for ${event.name}`}
-          loading="lazy"
-          width={768}
-          height={1024}
-          className="mt-2 w-full max-w-xs rounded-2xl border border-border object-cover"
-        />
-      </section>
+          {event.screenshot_url && (
+            <section className="mt-6">
+              <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+                Original screenshot
+              </h2>
+              <img
+                src={event.screenshot_url}
+                alt={`Screenshot saved for ${event.event_name}`}
+                loading="lazy"
+                className="mt-2 w-full max-w-xs rounded-2xl border border-border object-cover"
+              />
+            </section>
+          )}
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button className="sm:w-auto" onClick={() => toast("Editing coming soon")}>
-          <Pencil className="h-4 w-4" />
-          Edit event
-        </Button>
-        <Button
-          variant="outline"
-          className="sm:w-auto"
-          onClick={() => {
-            toast.success("Event deleted");
-            navigate({ to: "/events" });
-          }}
-        >
-          <Trash2 className="h-4 w-4" />
-          Delete
-        </Button>
-      </div>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button className="sm:w-auto" onClick={() => toast("Editing coming soon")}>
+              <Pencil className="h-4 w-4" />
+              Edit event
+            </Button>
+            <Button
+              variant="outline"
+              className="sm:w-auto"
+              disabled={removeEvent.isPending}
+              onClick={() => removeEvent.mutate()}
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          </div>
+        </>
+      )}
     </AppShell>
   );
 }
