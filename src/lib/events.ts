@@ -1,91 +1,73 @@
-export type EvraEvent = {
-  id: string;
-  name: string;
-  start: string; // ISO
-  end?: string;
-  location: string;
-  ticketRelease?: string;
-  registrationDeadline?: string;
-  notes?: string;
-  screenshot?: string;
+import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+import { queryOptions } from "@tanstack/react-query";
+
+export type EvraEvent = Database["public"]["Tables"]["events"]["Row"];
+export type NewEvraEvent = Database["public"]["Tables"]["events"]["Insert"];
+
+/** Parse a `YYYY-MM-DD` date as local time (avoids UTC off-by-one). */
+export const parseDate = (value: string) => {
+  const [y, m, d] = value.slice(0, 10).split("-").map(Number);
+  return new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
 };
 
-export const mockEvents: EvraEvent[] = [
-  {
-    id: "night-market",
-    name: "Kensington Night Market",
-    start: "2026-09-04T19:00:00",
-    end: "2026-09-04T23:00:00",
-    location: "Kensington Ave, Toronto",
-    ticketRelease: "Free entry — no ticket needed",
-    registrationDeadline: "None",
-    notes: "Bring cash. Meet Sam by the bandstand at 7:15.",
+export const eventsQueryOptions = queryOptions({
+  queryKey: ["events"],
+  queryFn: async (): Promise<EvraEvent[]> => {
+    const { data, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("start_date", { ascending: true });
+    if (error) throw error;
+    return data ?? [];
   },
-  {
-    id: "design-week",
-    name: "Design Week Opening Party",
-    start: "2026-09-12T18:30:00",
-    end: "2026-09-12T22:00:00",
-    location: "The Assembly, 45 Sterling Rd",
-    ticketRelease: "Aug 25, 10:00 AM",
-    registrationDeadline: "Sep 10, 11:59 PM",
-    notes: "RSVP list closes early most years — set a reminder.",
-  },
-  {
-    id: "lakeside-run",
-    name: "Lakeside 10K",
-    start: "2026-10-03T08:00:00",
-    end: "2026-10-03T11:00:00",
-    location: "Ontario Place, Toronto",
-    ticketRelease: "Registration open now",
-    registrationDeadline: "Sep 26, 6:00 PM",
-    notes: "Early bird pricing until September 1.",
-  },
-  {
-    id: "ceramics",
-    name: "Ceramics Studio Intro",
-    start: "2026-10-19T17:30:00",
-    end: "2026-10-19T20:00:00",
-    location: "Clayworks, 210 Dundas St W",
-    ticketRelease: "Sep 30, 12:00 PM",
-    registrationDeadline: "Oct 15",
-    notes: "Only 12 spots per session.",
-  },
-  {
-    id: "film-fest",
-    name: "Open Air Film Festival",
-    start: "2026-07-11T20:30:00",
-    location: "Christie Pits Park",
-    ticketRelease: "Was free",
-    notes: "Loved it — check next year's lineup.",
-  },
-  {
-    id: "jazz-loft",
-    name: "Jazz Loft Session",
-    start: "2026-06-22T21:00:00",
-    location: "The Loft, 88 Ossington",
-    notes: "Small room, arrive early.",
-  },
-];
+});
 
-export const getEvent = (id: string) => mockEvents.find((e) => e.id === id);
+export const eventQueryOptions = (id: string) =>
+  queryOptions({
+    queryKey: ["events", id],
+    queryFn: async (): Promise<EvraEvent | null> => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
-const now = () => new Date();
+export const createEvent = async (input: NewEvraEvent) => {
+  const { data, error } = await supabase.from("events").insert(input).select().single();
+  if (error) throw error;
+  return data;
+};
 
-export const isPast = (e: EvraEvent) => new Date(e.end ?? e.start) < now();
+export const deleteEvent = async (id: string) => {
+  const { error } = await supabase.from("events").delete().eq("id", id);
+  if (error) throw error;
+};
 
-export const upcomingEvents = () =>
-  mockEvents
+const startOfToday = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+export const isPast = (e: EvraEvent) => parseDate(e.end_date ?? e.start_date) < startOfToday();
+
+export const upcomingEvents = (events: EvraEvent[]) =>
+  events
     .filter((e) => !isPast(e))
-    .sort((a, b) => +new Date(a.start) - +new Date(b.start));
+    .sort((a, b) => +parseDate(a.start_date) - +parseDate(b.start_date));
 
-export const pastEvents = () =>
-  mockEvents.filter(isPast).sort((a, b) => +new Date(b.start) - +new Date(a.start));
+export const pastEvents = (events: EvraEvent[]) =>
+  events.filter(isPast).sort((a, b) => +parseDate(b.start_date) - +parseDate(a.start_date));
 
 export const groupByMonth = (events: EvraEvent[]) => {
   const groups: { key: string; label: string; events: EvraEvent[] }[] = [];
   for (const e of events) {
-    const d = new Date(e.start);
+    const d = parseDate(e.start_date);
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     const label = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
     let g = groups.find((x) => x.key === key);
@@ -98,19 +80,32 @@ export const groupByMonth = (events: EvraEvent[]) => {
   return groups;
 };
 
-export const formatDay = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", { day: "numeric" });
+export const formatDay = (date: string) =>
+  parseDate(date).toLocaleDateString("en-US", { day: "numeric" });
 
-export const formatWeekday = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", { weekday: "short" });
+export const formatWeekday = (date: string) =>
+  parseDate(date).toLocaleDateString("en-US", { weekday: "short" });
 
-export const formatTime = (iso: string) =>
-  new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-
-export const formatFullDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-US", {
+export const formatFullDate = (date: string) =>
+  parseDate(date).toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
   });
+
+export const formatDateTime = (iso: string | null) =>
+  iso
+    ? new Date(iso).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : null;
+
+export const displayTime = (e: EvraEvent) =>
+  e.is_all_day ? "All day" : (e.time?.trim() || "TBD");
+
+export const displayLocation = (e: EvraEvent) => e.location?.trim() || "TBD";
