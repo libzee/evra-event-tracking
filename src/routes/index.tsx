@@ -32,7 +32,10 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const coming = upcomingEvents().slice(0, 3);
+  const navigate = useNavigate();
+  const { data: events = [] } = useQuery(eventsQueryOptions);
+  const coming = upcomingEvents(events).slice(0, 3);
+
 
   const handleFiles = (files: FileList | null) => {
     const file = files?.[0];
