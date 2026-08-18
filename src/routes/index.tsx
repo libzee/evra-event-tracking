@@ -33,11 +33,13 @@ function Index() {
   const coming = upcomingEvents().slice(0, 3);
 
   const handleFiles = (files: FileList | null) => {
-    if (!files?.length) return;
-    toast.success(`Saved “${files[0].name}” to your drafts`, {
+    const file = files?.[0];
+    if (!file) return;
+    toast.success(`Saved “${file.name}” to your drafts`, {
       description: "Event details will be filled in later.",
     });
   };
+
 
   return (
     <AppShell>
