@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
 import { EventCard } from "@/components/EventCard";
-import { groupByMonth, pastEvents, upcomingEvents } from "@/lib/events";
+import { eventsQueryOptions, groupByMonth, pastEvents, upcomingEvents } from "@/lib/events";
 
 export const Route = createFileRoute("/events/")({
   head: () => ({
@@ -16,18 +17,29 @@ export const Route = createFileRoute("/events/")({
         property: "og:description",
         content: "Every saved event, grouped by month, plus everything you've already been to.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: EventsPage,
 });
 
 function EventsPage() {
-  const groups = groupByMonth(upcomingEvents());
-  const past = pastEvents();
+  const { data: events = [], isLoading } = useQuery(eventsQueryOptions);
+  const groups = groupByMonth(upcomingEvents(events));
+  const past = pastEvents(events);
 
   return (
     <AppShell>
       <h1 className="text-2xl font-semibold tracking-tight">Events</h1>
+
+      {isLoading ? (
+        <p className="mt-6 text-sm text-muted-foreground">Loading your events…</p>
+      ) : events.length === 0 ? (
+        <p className="mt-6 text-sm text-muted-foreground">
+          No events saved yet — add one from the home screen.
+        </p>
+      ) : null}
 
       <div className="mt-6 space-y-8">
         {groups.map((group) => (
