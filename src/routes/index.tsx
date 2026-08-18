@@ -1,12 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, ImageUp, PenLine, Upload } from "lucide-react";
+import { ArrowRight, ImageUp, Loader2, PenLine, Upload, X } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EventCard } from "@/components/EventCard";
 import { eventsQueryOptions, upcomingEvents } from "@/lib/events";
+import { uploadScreenshot } from "@/lib/screenshots";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
 
 
 export const Route = createFileRoute("/")({
