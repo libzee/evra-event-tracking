@@ -48,6 +48,21 @@ export const deleteEvent = async (id: string) => {
   if (error) throw error;
 };
 
+export const updateEvent = async (id: string, input: Omit<NewEvraEvent, "id">) => {
+  const { data, error } = await supabase.from("events").update(input).eq("id", id).select().single();
+  if (error) throw error;
+  return data;
+};
+
+const pad2 = (n: number) => n.toString().padStart(2, "0");
+
+/** Convert an ISO datetime back into the local `datetime-local` input format. */
+export const toDatetimeLocal = (iso: string | null) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+};
+
 const startOfToday = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
