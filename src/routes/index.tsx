@@ -121,10 +121,15 @@ function Index() {
           </Link>
         </div>
         <div className="mt-3 space-y-3">
-          {coming.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
+          {coming.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+              Nothing saved yet — add your first event.
+            </p>
+          ) : (
+            coming.map((event) => <EventCard key={event.id} event={event} />)
+          )}
         </div>
+
       </section>
     </AppShell>
   );
