@@ -14,7 +14,7 @@ import {
 import { toast } from "sonner";
 import type { ReactNode } from "react";
 
-export const Route = createFileRoute("/events/$eventId")({
+export const Route = createFileRoute("/events/$eventId/")({
   head: () => ({
     meta: [
       { title: "Event details — evra" },
