@@ -129,7 +129,10 @@ function EventDetail() {
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button className="sm:w-auto" onClick={() => toast("Editing coming soon")}>
+            <Button
+              className="sm:w-auto"
+              onClick={() => navigate({ to: "/events/$eventId/edit", params: { eventId } })}
+            >
               <Pencil className="h-4 w-4" />
               Edit event
             </Button>
