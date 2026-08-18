@@ -108,9 +108,9 @@ const shortMonth = (date: string) =>
   parseDate(date).toLocaleDateString("en-US", { month: "short" }).toUpperCase();
 
 /**
- * Compact date label for an event: TODAY / TOMORROW / SEP 12 / SEP 12–15.
+ * Compact date badge for an event: SEP 12 / SEP 12–15.
  */
-export const displayDateLabel = (e: EvraEvent) => {
+export const eventDateLabel = (e: EvraEvent) => {
   const start = e.start_date.slice(0, 10);
   const end = e.end_date?.slice(0, 10);
   const isRange = !!end && end !== start;
@@ -122,10 +122,18 @@ export const displayDateLabel = (e: EvraEvent) => {
       : `${shortMonth(start)} ${formatDay(start)} – ${shortMonth(end!)} ${formatDay(end!)}`;
   }
 
+  return `${shortMonth(start)} ${formatDay(start)}`;
+};
+
+/**
+ * TODAY / TOMORROW indicator for an event, or null.
+ */
+export const eventUrgencyLabel = (e: EvraEvent) => {
+  const start = e.start_date.slice(0, 10);
   const diff = daysFromToday(start);
   if (diff === 0) return "TODAY";
   if (diff === 1) return "TOMORROW";
-  return `${shortMonth(start)} ${formatDay(start)}`;
+  return null;
 };
 
 export const formatFullDate = (date: string) =>
