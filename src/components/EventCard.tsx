@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Clock } from "lucide-react";
 import {
+  displayDateLabel,
   displayLocation,
   displayTime,
-  formatDay,
-  formatWeekday,
   type EvraEvent,
 } from "@/lib/events";
 
