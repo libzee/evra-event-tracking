@@ -97,7 +97,8 @@ function Index() {
             Upload screenshot
           </Button>
           <button
-            onClick={() => toast("Manual entry coming soon")}
+            onClick={() => navigate({ to: "/events/new" })}
+
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
             <PenLine className="h-3.5 w-3.5" />
