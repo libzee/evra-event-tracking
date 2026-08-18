@@ -6,12 +6,12 @@ import { groupByMonth, pastEvents, upcomingEvents } from "@/lib/events";
 export const Route = createFileRoute("/events/")({
   head: () => ({
     meta: [
-      { title: "Your events — Evra" },
+      { title: "Your events — evra" },
       {
         name: "description",
         content: "Every saved event, grouped by month, plus everything you've already been to.",
       },
-      { property: "og:title", content: "Your events — Evra" },
+      { property: "og:title", content: "Your events — evra" },
       {
         property: "og:description",
         content: "Every saved event, grouped by month, plus everything you've already been to.",

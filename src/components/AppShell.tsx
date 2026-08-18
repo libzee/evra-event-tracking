@@ -5,7 +5,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <Link to="/" className={`inline-flex items-center gap-2 ${className}`}>
       <span className="h-2.5 w-2.5 rounded-full bg-brand" />
-      <span className="text-xl font-semibold tracking-tight">Evra</span>
+      <span className="text-xl font-semibold tracking-tight">evra</span>
     </Link>
   );
 }

@@ -10,17 +10,17 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Evra — Save events from a screenshot" },
+      { title: "evra — Save events from a screenshot" },
       {
         name: "description",
         content:
-          "Drop a screenshot and Evra keeps the date, time and location of every event you want to remember.",
+          "Drop a screenshot and evra keeps the date, time and location of every event you want to remember.",
       },
-      { property: "og:title", content: "Evra — Save events from a screenshot" },
+      { property: "og:title", content: "evra — Save events from a screenshot" },
       {
         property: "og:description",
         content:
-          "Drop a screenshot and Evra keeps the date, time and location of every event you want to remember.",
+          "Drop a screenshot and evra keeps the date, time and location of every event you want to remember.",
       },
     ],
   }),
@@ -48,7 +48,7 @@ function Index() {
           Never lose an event again
         </h1>
         <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-          Screenshot it, drop it here, and Evra remembers the details for you.
+          Screenshot it, drop it here, and evra remembers the details for you.
         </p>
       </section>
 
