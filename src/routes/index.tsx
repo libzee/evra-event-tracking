@@ -97,12 +97,33 @@ function Index() {
             alt="Uploaded event screenshot preview"
             className="max-h-[70vh] w-full bg-secondary object-contain"
           />
-          <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:justify-end">
-            <Button variant="secondary" onClick={() => inputRef.current?.click()}>
+          <div className="flex flex-col gap-3 px-4 py-4">
+            {extractError && (
+              <p
+                role="alert"
+                className="rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              >
+                {extractError}
+              </p>
+            )}
+            <Button size="lg" disabled={extracting} onClick={() => void handleExtract()}>
+              {extracting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {extracting ? "Extracting event…" : "Extract event"}
+            </Button>
+            <Button
+              variant="secondary"
+              disabled={extracting}
+              onClick={() => inputRef.current?.click()}
+            >
               <ImageUp className="h-4 w-4" />
               Replace screenshot
             </Button>
           </div>
+
           <input
             ref={inputRef}
             type="file"
