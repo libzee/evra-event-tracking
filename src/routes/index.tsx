@@ -1,11 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, ImageUp, Loader2, PenLine, Upload, X } from "lucide-react";
+import { ArrowRight, ImageUp, Loader2, PenLine, Sparkles, Upload, X } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EventCard } from "@/components/EventCard";
 import { eventsQueryOptions, upcomingEvents } from "@/lib/events";
 import { uploadScreenshot } from "@/lib/screenshots";
+import { extractEventFromScreenshot } from "@/lib/extract-event.functions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -36,6 +37,8 @@ function Index() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [screenshot, setScreenshot] = useState<{ path: string; previewUrl: string } | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { data: events = [] } = useQuery(eventsQueryOptions);
@@ -62,9 +65,30 @@ function Index() {
     }
   };
 
+  const handleExtract = async () => {
+    if (!screenshot) return;
+    setExtractError(null);
+    setExtracting(true);
+    try {
+      const extracted = await extractEventFromScreenshot({
+        data: { imageUrl: screenshot.previewUrl, today: new Date().toISOString().slice(0, 10) },
+      });
+      sessionStorage.setItem("evra:pending-extraction", JSON.stringify(extracted));
+      navigate({ to: "/events/verify" });
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : "Couldn't extract the event. Please try again.";
+      setExtractError(message);
+      toast.error(message);
+    } finally {
+      setExtracting(false);
+    }
+  };
+
   const clearScreenshot = () => {
     setScreenshot(null);
     setError(null);
+    setExtractError(null);
     sessionStorage.removeItem("evra:pending-screenshot");
   };
 
