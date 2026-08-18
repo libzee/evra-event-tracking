@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Clock } from "lucide-react";
 import {
+  displayDateLabel,
   displayLocation,
   displayTime,
-  formatDay,
-  formatWeekday,
   type EvraEvent,
 } from "@/lib/events";
 
@@ -17,11 +16,10 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
         muted ? "opacity-70" : ""
       }`}
     >
-      <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground">
-        <span className="text-[0.65rem] font-medium uppercase tracking-widest">
-          {formatWeekday(event.start_date)}
+      <div className="grid min-h-14 w-16 shrink-0 place-items-center rounded-xl bg-accent px-2 py-2 text-center text-accent-foreground">
+        <span className="text-[0.7rem] font-semibold uppercase leading-tight tracking-widest">
+          {displayDateLabel(event)}
         </span>
-        <span className="text-lg font-semibold leading-none">{formatDay(event.start_date)}</span>
       </div>
       <div className="min-w-0">
         <h3 className="truncate text-base font-semibold">{event.event_name}</h3>

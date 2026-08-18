@@ -101,6 +101,33 @@ export const formatDay = (date: string) =>
 export const formatWeekday = (date: string) =>
   parseDate(date).toLocaleDateString("en-US", { weekday: "short" });
 
+const daysFromToday = (date: string) =>
+  Math.round((+parseDate(date) - +startOfToday()) / 86_400_000);
+
+const shortMonth = (date: string) =>
+  parseDate(date).toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+
+/**
+ * Compact date label for an event: TODAY / TOMORROW / SEP 12 / SEP 12–15.
+ */
+export const displayDateLabel = (e: EvraEvent) => {
+  const start = e.start_date.slice(0, 10);
+  const end = e.end_date?.slice(0, 10);
+  const isRange = !!end && end !== start;
+
+  if (isRange) {
+    const sameMonth = shortMonth(start) === shortMonth(end!);
+    return sameMonth
+      ? `${shortMonth(start)} ${formatDay(start)}–${formatDay(end!)}`
+      : `${shortMonth(start)} ${formatDay(start)} – ${shortMonth(end!)} ${formatDay(end!)}`;
+  }
+
+  const diff = daysFromToday(start);
+  if (diff === 0) return "TODAY";
+  if (diff === 1) return "TOMORROW";
+  return `${shortMonth(start)} ${formatDay(start)}`;
+};
+
 export const formatFullDate = (date: string) =>
   parseDate(date).toLocaleDateString("en-US", {
     weekday: "long",
