@@ -16,10 +16,10 @@ export const Route = createFileRoute("/events/$eventId")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Event not found — Evra" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Event not found — evra" }, { name: "robots", content: "noindex" }],
       };
     }
-    const title = `${loaderData.event.name} — Evra`;
+    const title = `${loaderData.event.name} — evra`;
     const description = `${formatFullDate(loaderData.event.start)} · ${loaderData.event.location}`;
     return {
       meta: [
