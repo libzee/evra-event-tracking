@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           date_is_estimated: boolean
+          date_label: string | null
           end_date: string | null
           event_name: string
           id: string
@@ -26,7 +27,7 @@ export type Database = {
           notes: string | null
           registration_deadline: string | null
           screenshot_url: string | null
-          start_date: string
+          start_date: string | null
           ticket_release_datetime: string | null
           time: string | null
           updated_at: string
@@ -34,6 +35,7 @@ export type Database = {
         Insert: {
           created_at?: string
           date_is_estimated?: boolean
+          date_label?: string | null
           end_date?: string | null
           event_name: string
           id?: string
@@ -42,7 +44,7 @@ export type Database = {
           notes?: string | null
           registration_deadline?: string | null
           screenshot_url?: string | null
-          start_date: string
+          start_date?: string | null
           ticket_release_datetime?: string | null
           time?: string | null
           updated_at?: string
@@ -50,6 +52,7 @@ export type Database = {
         Update: {
           created_at?: string
           date_is_estimated?: boolean
+          date_label?: string | null
           end_date?: string | null
           event_name?: string
           id?: string
@@ -58,7 +61,7 @@ export type Database = {
           notes?: string | null
           registration_deadline?: string | null
           screenshot_url?: string | null
-          start_date?: string
+          start_date?: string | null
           ticket_release_datetime?: string | null
           time?: string | null
           updated_at?: string
