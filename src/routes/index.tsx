@@ -104,23 +104,23 @@ function Index() {
 
   return (
     <AppShell>
-      <section className="pt-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+      <section className="pt-1 text-center">
+        <h1 className="text-[1.6rem] font-semibold leading-tight tracking-tight sm:text-3xl">
           Never lose an event again
         </h1>
-        <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+        <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground sm:max-w-sm">
           Screenshot it, drop it here, and evra remembers the details for you.
         </p>
       </section>
 
       {screenshot ? (
-        <section className="mt-6 overflow-hidden rounded-3xl border border-border bg-surface">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/60 px-4 py-3">
+        <section className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/70 px-4 py-3">
             <p className="truncate text-sm font-medium">Screenshot uploaded</p>
             <button
               onClick={clearScreenshot}
               aria-label="Remove screenshot"
-              className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-secondary"
             >
               <X className="h-4 w-4" />
               Remove
@@ -129,9 +129,10 @@ function Index() {
           <img
             src={screenshot.previewUrl}
             alt="Uploaded event screenshot preview"
-            className="max-h-[70vh] w-full bg-secondary object-contain"
+            className="max-h-[52vh] w-full bg-secondary object-contain sm:max-h-[60vh]"
           />
-          <div className="flex flex-col gap-3 px-4 py-4">
+          <div className="flex flex-col gap-2.5 px-4 py-4">
+
             {noEvent ? (
               <>
                 <div className="rounded-2xl border border-border bg-secondary/50 px-4 py-4 text-center">
