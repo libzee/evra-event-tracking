@@ -142,7 +142,9 @@ export const eventDateLabel = (e: EvraEvent) => {
  * TODAY / TOMORROW indicator for an event, or null.
  */
 export const eventUrgencyLabel = (e: EvraEvent) => {
+  if (!e.start_date) return null;
   const start = e.start_date.slice(0, 10);
+
   const diff = daysFromToday(start);
   if (diff === 0) return "TODAY";
   if (diff === 1) return "TOMORROW";
