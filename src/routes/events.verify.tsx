@@ -158,27 +158,29 @@ function VerifyPage() {
 
   return (
     <AppShell>
-      <div className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
+      <div className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
         <Sparkles className="h-3.5 w-3.5" />
         Extracted from your screenshot
       </div>
 
-      <h1 className="mt-4 text-2xl font-semibold tracking-tight">Check the details</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h1 className="mt-4 text-[1.6rem] font-semibold leading-tight tracking-tight sm:text-3xl">
+        Check the details
+      </h1>
+      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
         Nothing is saved yet — edit anything that looks off, then save.
       </p>
 
       {screenshotUrl && (
-        <div className="mt-5 overflow-hidden rounded-3xl border border-border bg-surface">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-border bg-surface">
           <img
             src={screenshotUrl}
             alt="Original event screenshot"
-            className="max-h-[45vh] w-full bg-secondary object-contain"
+            className="max-h-[38vh] w-full bg-secondary object-contain sm:max-h-[45vh]"
           />
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="mt-6 space-y-5">
+      <form onSubmit={onSubmit} className="mt-7 space-y-5">
         <Field label="Event name" htmlFor="event_name">
           <Input
             id="event_name"
