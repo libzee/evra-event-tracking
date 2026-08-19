@@ -49,6 +49,8 @@ function Index() {
     const file = files?.[0];
     if (!file) return;
     setError(null);
+    setNoEvent(false);
+    setExtractError(null);
     setUploading(true);
     try {
       const uploaded = await uploadScreenshot(file);
