@@ -34,7 +34,9 @@ export const Route = createFileRoute("/events/")({
 function EventsPage() {
   const { data: events = [], isLoading } = useQuery(eventsQueryOptions);
   const groups = groupByMonth(upcomingEvents(events));
+  const undated = undatedEvents(events);
   const past = pastEvents(events);
+
 
   return (
     <AppShell>
