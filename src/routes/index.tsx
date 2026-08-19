@@ -39,6 +39,7 @@ function Index() {
   const [screenshot, setScreenshot] = useState<{ path: string; previewUrl: string } | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
+  const [noEvent, setNoEvent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { data: events = [] } = useQuery(eventsQueryOptions);
