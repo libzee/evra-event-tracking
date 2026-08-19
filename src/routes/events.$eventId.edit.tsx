@@ -257,6 +257,7 @@ function EditEventPage() {
               type="button"
               variant="outline"
               size="lg"
+              className="w-full sm:w-auto"
               onClick={() => navigate({ to: "/events/$eventId", params: { eventId } })}
             >
               Cancel
