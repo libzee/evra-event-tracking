@@ -10,14 +10,15 @@ export type ExtractedEvent = {
   event_name: string;
   start_date: string | null;
   end_date: string | null;
+  date_label: string | null;
   time: string;
   is_all_day: boolean;
   location: string;
   ticket_release_datetime: string | null;
   registration_deadline: string | null;
   notes: string | null;
-  date_is_estimated: boolean;
 };
+
 
 export const extractEventFromScreenshot = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => inputSchema.parse(data))
