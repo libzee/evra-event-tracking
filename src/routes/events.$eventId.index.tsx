@@ -10,6 +10,7 @@ import {
   eventQueryOptions,
   formatDateTime,
   formatFullDate,
+  ticketStatus,
 } from "@/lib/events";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
