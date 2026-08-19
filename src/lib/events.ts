@@ -122,7 +122,9 @@ const shortMonth = (date: string) =>
  * Compact date badge for an event: SEP 12 / SEP 12–15.
  */
 export const eventDateLabel = (e: EvraEvent) => {
+  if (!e.start_date) return "TBD";
   const start = e.start_date.slice(0, 10);
+
   const end = e.end_date?.slice(0, 10);
   const isRange = !!end && end !== start;
 
