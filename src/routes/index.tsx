@@ -104,23 +104,23 @@ function Index() {
 
   return (
     <AppShell>
-      <section className="pt-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+      <section className="pt-1 text-center">
+        <h1 className="text-[1.6rem] font-semibold leading-tight tracking-tight sm:text-3xl">
           Never lose an event again
         </h1>
-        <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+        <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground sm:max-w-sm">
           Screenshot it, drop it here, and evra remembers the details for you.
         </p>
       </section>
 
       {screenshot ? (
-        <section className="mt-6 overflow-hidden rounded-3xl border border-border bg-surface">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/60 px-4 py-3">
+        <section className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/70 px-4 py-3">
             <p className="truncate text-sm font-medium">Screenshot uploaded</p>
             <button
               onClick={clearScreenshot}
               aria-label="Remove screenshot"
-              className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground active:bg-secondary"
             >
               <X className="h-4 w-4" />
               Remove
@@ -129,9 +129,10 @@ function Index() {
           <img
             src={screenshot.previewUrl}
             alt="Uploaded event screenshot preview"
-            className="max-h-[70vh] w-full bg-secondary object-contain"
+            className="max-h-[52vh] w-full bg-secondary object-contain sm:max-h-[60vh]"
           />
-          <div className="flex flex-col gap-3 px-4 py-4">
+          <div className="flex flex-col gap-2.5 px-4 py-4">
+
             {noEvent ? (
               <>
                 <div className="rounded-2xl border border-border bg-secondary/50 px-4 py-4 text-center">
@@ -140,12 +141,13 @@ function Index() {
                     This screenshot doesn&apos;t appear to contain an event.
                   </p>
                 </div>
-                <Button size="lg" onClick={() => inputRef.current?.click()}>
+                <Button size="lg" className="w-full" onClick={() => inputRef.current?.click()}>
                   <ImageUp className="h-4 w-4" />
                   Try another screenshot
                 </Button>
                 <Button
                   variant="secondary"
+                  className="w-full"
                   onClick={() => navigate({ to: "/events/new" })}
                 >
                   <PenLine className="h-4 w-4" />
@@ -157,12 +159,17 @@ function Index() {
                 {extractError && (
                   <p
                     role="alert"
-                    className="rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                    className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive"
                   >
                     {extractError}
                   </p>
                 )}
-                <Button size="lg" disabled={extracting} onClick={() => void handleExtract()}>
+                <Button
+                  size="lg"
+                  className="w-full"
+                  disabled={extracting}
+                  onClick={() => void handleExtract()}
+                >
                   {extracting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
@@ -172,6 +179,7 @@ function Index() {
                 </Button>
                 <Button
                   variant="secondary"
+                  className="w-full"
                   disabled={extracting}
                   onClick={() => inputRef.current?.click()}
                 >
@@ -202,7 +210,7 @@ function Index() {
             setDragging(false);
             void handleFiles(e.dataTransfer.files);
           }}
-          className={`mt-6 rounded-3xl border-2 border-dashed px-6 py-12 text-center transition-colors ${
+          className={`mt-6 rounded-2xl border border-dashed px-5 py-10 text-center transition-colors sm:px-6 sm:py-14 ${
             dragging ? "border-brand bg-accent" : "border-border bg-surface"
           }`}
         >
@@ -213,7 +221,7 @@ function Index() {
               <Upload className="h-6 w-6" />
             )}
           </div>
-          <p className="mt-4 text-lg font-medium">
+          <p className="mt-4 text-base font-semibold sm:text-lg">
             {uploading ? "Uploading screenshot…" : "Drop an event here"}
           </p>
           <p className="mt-1 hidden text-sm text-muted-foreground sm:block">
@@ -234,13 +242,13 @@ function Index() {
           {error && (
             <p
               role="alert"
-              className="mx-auto mt-4 max-w-sm rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              className="mx-auto mt-4 max-w-sm rounded-xl bg-destructive/10 px-3.5 py-2.5 text-sm text-destructive"
             >
               {error}
             </p>
           )}
 
-          <div className="mt-6 flex flex-col items-center gap-3">
+          <div className="mt-7 flex flex-col items-center gap-3.5">
             <Button
               size="lg"
               className="w-full sm:w-auto"
@@ -256,7 +264,7 @@ function Index() {
             </Button>
             <button
               onClick={() => navigate({ to: "/events/new" })}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
               <PenLine className="h-3.5 w-3.5" />
               Add manually
@@ -265,30 +273,28 @@ function Index() {
         </section>
       )}
 
-
-      <section className="mt-10">
+      <section className="mt-11">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <h2 className="truncate text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          <h2 className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Coming up
           </h2>
           <Link
             to="/events"
-            className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-brand"
+            className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-brand transition-opacity hover:opacity-80"
           >
             View all events
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
-        <div className="mt-3 space-y-3">
+        <div className="mt-3 space-y-2.5">
           {coming.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+            <p className="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
               Nothing saved yet — add your first event.
             </p>
           ) : (
             coming.map((event) => <EventCard key={event.id} event={event} />)
           )}
         </div>
-
       </section>
     </AppShell>
   );
