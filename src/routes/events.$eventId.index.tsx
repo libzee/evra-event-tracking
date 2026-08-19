@@ -103,11 +103,16 @@ function EventDetail() {
             <Row
               icon={<CalendarDays className="h-4 w-4" />}
               label="Date"
-              value={`${formatFullDate(event.start_date)}${
-                event.end_date ? ` – ${formatFullDate(event.end_date)}` : ""
-              }`}
-              badge={event.date_is_estimated ? <EstimatedBadge /> : undefined}
+              value={
+                event.start_date
+                  ? `${formatFullDate(event.start_date)}${
+                      event.end_date ? ` – ${formatFullDate(event.end_date)}` : ""
+                    }`
+                  : "TBD"
+              }
+              sub={event.start_date ? null : event.date_label}
             />
+
             <Row icon={<Clock className="h-4 w-4" />} label="Time" value={displayTime(event)} />
             <Row
               icon={<MapPin className="h-4 w-4" />}
