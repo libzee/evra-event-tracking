@@ -179,9 +179,10 @@ export const ticketStatus = (e: EvraEvent, now = new Date()) => {
     const deadline = new Date(e.registration_deadline);
     if (now >= deadline) return null;
   } else {
-    const eventEnd = endOfDay(e.end_date ?? e.start_date);
-    if (now >= eventEnd) return null;
+    const date = e.end_date ?? e.start_date;
+    if (date && now >= endOfDay(date)) return null;
   }
+
 
   return "Tickets are live";
 };
