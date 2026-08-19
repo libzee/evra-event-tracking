@@ -22,11 +22,6 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
     >
       {/* Desktop badges — top-right corner */}
       <div className="absolute right-3 top-3 hidden flex-col items-end gap-1 md:flex">
-        {event.date_label && (
-          <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[0.65rem] font-medium text-brand">
-            {event.date_label}
-          </span>
-        )}
         {urgency && (
           <span className="text-[0.65rem] font-bold uppercase tracking-wider text-brand">
             {urgency}
@@ -48,11 +43,6 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
         <h3 className="truncate text-base font-semibold">{event.event_name}</h3>
         {/* Mobile badges — below title, above time */}
         <div className="mt-1.5 flex flex-wrap items-center gap-2 md:hidden">
-          {event.date_label && (
-            <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[0.65rem] font-medium text-brand">
-              {event.date_label}
-            </span>
-          )}
 
           {urgency && (
             <span className="text-[0.65rem] font-bold uppercase tracking-wider text-brand">
