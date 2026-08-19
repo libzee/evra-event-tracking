@@ -49,8 +49,7 @@ function Row({
       <div className="min-w-0">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
         <p className="mt-0.5 text-sm font-medium">
-          {value}
-          {badge ? <span className="ml-2 align-middle">{badge}</span> : null}
+          {value} {badge ? <span className="align-middle">{badge}</span> : null}
         </p>
       </div>
     </div>
