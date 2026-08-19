@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
 import { EventCard } from "@/components/EventCard";
-import { eventsQueryOptions, groupByMonth, pastEvents, upcomingEvents } from "@/lib/events";
+import {
+  eventsQueryOptions,
+  groupByMonth,
+  pastEvents,
+  undatedEvents,
+  upcomingEvents,
+} from "@/lib/events";
+
 
 export const Route = createFileRoute("/events/")({
   head: () => ({
