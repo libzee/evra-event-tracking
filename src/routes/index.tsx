@@ -39,6 +39,7 @@ function Index() {
   const [screenshot, setScreenshot] = useState<{ path: string; previewUrl: string } | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
+  const [noEvent, setNoEvent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { data: events = [] } = useQuery(eventsQueryOptions);
@@ -48,6 +49,8 @@ function Index() {
     const file = files?.[0];
     if (!file) return;
     setError(null);
+    setNoEvent(false);
+    setExtractError(null);
     setUploading(true);
     try {
       const uploaded = await uploadScreenshot(file);
@@ -68,11 +71,17 @@ function Index() {
   const handleExtract = async () => {
     if (!screenshot) return;
     setExtractError(null);
+    setNoEvent(false);
     setExtracting(true);
     try {
       const extracted = await extractEventFromScreenshot({
         data: { imageUrl: screenshot.previewUrl, today: new Date().toISOString().slice(0, 10) },
       });
+      if (!extracted.is_event) {
+        sessionStorage.removeItem("evra:pending-extraction");
+        setNoEvent(true);
+        return;
+      }
       sessionStorage.setItem("evra:pending-extraction", JSON.stringify(extracted));
       navigate({ to: "/events/verify" });
     } catch (e) {
@@ -89,6 +98,7 @@ function Index() {
     setScreenshot(null);
     setError(null);
     setExtractError(null);
+    setNoEvent(false);
     sessionStorage.removeItem("evra:pending-screenshot");
   };
 
@@ -122,30 +132,54 @@ function Index() {
             className="max-h-[70vh] w-full bg-secondary object-contain"
           />
           <div className="flex flex-col gap-3 px-4 py-4">
-            {extractError && (
-              <p
-                role="alert"
-                className="rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
-              >
-                {extractError}
-              </p>
+            {noEvent ? (
+              <>
+                <div className="rounded-2xl border border-border bg-secondary/50 px-4 py-4 text-center">
+                  <p className="text-base font-medium">No event found</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    This screenshot doesn&apos;t appear to contain an event.
+                  </p>
+                </div>
+                <Button size="lg" onClick={() => inputRef.current?.click()}>
+                  <ImageUp className="h-4 w-4" />
+                  Try another screenshot
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate({ to: "/events/new" })}
+                >
+                  <PenLine className="h-4 w-4" />
+                  Add manually
+                </Button>
+              </>
+            ) : (
+              <>
+                {extractError && (
+                  <p
+                    role="alert"
+                    className="rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  >
+                    {extractError}
+                  </p>
+                )}
+                <Button size="lg" disabled={extracting} onClick={() => void handleExtract()}>
+                  {extracting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  {extracting ? "Extracting event…" : "Extract event"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={extracting}
+                  onClick={() => inputRef.current?.click()}
+                >
+                  <ImageUp className="h-4 w-4" />
+                  Replace screenshot
+                </Button>
+              </>
             )}
-            <Button size="lg" disabled={extracting} onClick={() => void handleExtract()}>
-              {extracting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
-              {extracting ? "Extracting event…" : "Extract event"}
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={extracting}
-              onClick={() => inputRef.current?.click()}
-            >
-              <ImageUp className="h-4 w-4" />
-              Replace screenshot
-            </Button>
           </div>
 
           <input
