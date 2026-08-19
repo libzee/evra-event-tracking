@@ -79,7 +79,8 @@ function EditEventPage() {
     setStartDate(event.start_date ?? "");
     setEndDate(event.end_date ?? "");
     setIsAllDay(event.is_all_day);
-    setTime(event.is_all_day ? "" : (event.time ?? ""));
+    setStartTime(event.is_all_day ? "" : toTimeInput(event.start_time));
+    setEndTime(event.is_all_day ? "" : toTimeInput(event.end_time));
     setLocation(event.location ?? "");
     setTicketRelease(toDatetimeLocal(event.ticket_release_datetime));
     setRegistrationDeadline(toDatetimeLocal(event.registration_deadline));
