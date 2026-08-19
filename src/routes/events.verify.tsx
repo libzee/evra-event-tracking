@@ -191,8 +191,9 @@ function VerifyPage() {
           <Field
             label="Start date"
             htmlFor="start_date"
-            hint={startDate ? undefined : "TBD — add an exact date if you know it"}
+            hint={startDate ? "" : "TBD — add an exact date if you know it"}
           >
+
             <Input
               id="start_date"
               type="date"
