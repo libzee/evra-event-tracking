@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { createEvent, toDatetimeLocal } from "@/lib/events";
+import { createEvent, toDatetimeLocal, toTimeInput } from "@/lib/events";
 import type { ExtractedEvent } from "@/lib/extract-event.functions";
 
 export const Route = createFileRoute("/events/verify")({
@@ -63,7 +63,8 @@ function VerifyPage() {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [time, setTime] = useState("TBD");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [isAllDay, setIsAllDay] = useState(false);
   const [location, setLocation] = useState("TBD");
   const [ticketRelease, setTicketRelease] = useState("");
@@ -90,7 +91,8 @@ function VerifyPage() {
       setEventName(e.event_name ?? "");
       setStartDate(e.start_date ?? "");
       setEndDate(e.end_date ?? "");
-      setTime(e.time ?? "TBD");
+      setStartTime(toTimeInput(e.start_time));
+      setEndTime(toTimeInput(e.end_time));
       setIsAllDay(Boolean(e.is_all_day));
       setLocation(e.location ?? "TBD");
       setTicketRelease(toDatetimeLocal(e.ticket_release_datetime));
@@ -126,7 +128,9 @@ function VerifyPage() {
       event_name: eventName.trim(),
       start_date: startDate || null,
       end_date: endDate || null,
-      time: isAllDay ? "All day" : time.trim() || "TBD",
+      start_time: isAllDay ? null : startTime || null,
+      end_time: isAllDay ? null : endTime || null,
+      time: null,
       is_all_day: isAllDay,
       location: location.trim() || "TBD",
       ticket_release_datetime: ticketRelease ? new Date(ticketRelease).toISOString() : null,
@@ -218,9 +222,24 @@ function VerifyPage() {
         </div>
 
         {!isAllDay && (
-          <Field label="Time" htmlFor="time" hint="TBD if it wasn't in the screenshot">
-            <Input id="time" value={time} onChange={(e) => setTime(e.target.value)} />
-          </Field>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Start time" htmlFor="start_time" hint="TBD if it wasn't in the screenshot">
+              <Input
+                id="start_time"
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
+            </Field>
+            <Field label="End time" htmlFor="end_time" hint="Optional">
+              <Input
+                id="end_time"
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+            </Field>
+          </div>
         )}
 
         <Field label="Location" htmlFor="location" hint="TBD if it wasn't in the screenshot">

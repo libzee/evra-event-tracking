@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   eventQueryOptions,
   toDatetimeLocal,
+  toTimeInput,
   updateEvent,
 } from "@/lib/events";
 
@@ -64,7 +65,8 @@ function EditEventPage() {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [time, setTime] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [isAllDay, setIsAllDay] = useState(false);
   const [location, setLocation] = useState("");
   const [ticketRelease, setTicketRelease] = useState("");
@@ -78,7 +80,8 @@ function EditEventPage() {
     setStartDate(event.start_date ?? "");
     setEndDate(event.end_date ?? "");
     setIsAllDay(event.is_all_day);
-    setTime(event.is_all_day ? "" : (event.time ?? ""));
+    setStartTime(event.is_all_day ? "" : toTimeInput(event.start_time));
+    setEndTime(event.is_all_day ? "" : toTimeInput(event.end_time));
     setLocation(event.location ?? "");
     setTicketRelease(toDatetimeLocal(event.ticket_release_datetime));
     setRegistrationDeadline(toDatetimeLocal(event.registration_deadline));
@@ -107,7 +110,9 @@ function EditEventPage() {
       event_name: eventName.trim(),
       start_date: startDate || null,
       end_date: endDate || null,
-      time: isAllDay ? "All day" : time.trim() || "TBD",
+      start_time: isAllDay ? null : startTime || null,
+      end_time: isAllDay ? null : endTime || null,
+      time: null,
       is_all_day: isAllDay,
       location: location.trim() || "TBD",
       ticket_release_datetime: ticketRelease ? new Date(ticketRelease).toISOString() : null,
@@ -184,14 +189,24 @@ function EditEventPage() {
           </div>
 
           {!isAllDay && (
-            <Field label="Time" htmlFor="time" hint="Free text — defaults to TBD">
-              <Input
-                id="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                placeholder="7:00 PM – 11:00 PM"
-              />
-            </Field>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Start time" htmlFor="start_time" hint="Leave empty if TBD">
+                <Input
+                  id="start_time"
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </Field>
+              <Field label="End time" htmlFor="end_time" hint="Optional">
+                <Input
+                  id="end_time"
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </Field>
+            </div>
           )}
 
           <Field label="Location" htmlFor="location" hint="Defaults to TBD">
