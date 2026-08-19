@@ -97,6 +97,7 @@ Respond with ONLY a JSON object with keys: is_event, event_name, start_date, end
     const startDate = str(parsed["start_date"])?.slice(0, 10) ?? null;
 
     return {
+      is_event: parsed["is_event"] !== false,
       event_name: str(parsed["event_name"]) ?? "",
       start_date: startDate,
       end_date: startDate ? (str(parsed["end_date"])?.slice(0, 10) ?? null) : null,
