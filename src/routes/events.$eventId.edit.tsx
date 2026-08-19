@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   eventQueryOptions,
   toDatetimeLocal,
+  toTimeInput,
   updateEvent,
 } from "@/lib/events";
 
