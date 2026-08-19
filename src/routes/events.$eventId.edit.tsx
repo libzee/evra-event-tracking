@@ -70,13 +70,13 @@ function EditEventPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateIsEstimated, setDateIsEstimated] = useState(false);
+  const [dateLabel, setDateLabel] = useState("");
   const [prefilled, setPrefilled] = useState(false);
 
   useEffect(() => {
     if (!event || prefilled) return;
     setEventName(event.event_name);
-    setStartDate(event.start_date);
+    setStartDate(event.start_date ?? "");
     setEndDate(event.end_date ?? "");
     setIsAllDay(event.is_all_day);
     setTime(event.is_all_day ? "" : (event.time ?? ""));
@@ -84,7 +84,7 @@ function EditEventPage() {
     setTicketRelease(toDatetimeLocal(event.ticket_release_datetime));
     setRegistrationDeadline(toDatetimeLocal(event.registration_deadline));
     setNotes(event.notes ?? "");
-    setDateIsEstimated(event.date_is_estimated);
+    setDateLabel(event.date_label ?? "");
     setPrefilled(true);
   }, [event, prefilled]);
 
@@ -101,13 +101,13 @@ function EditEventPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!eventName.trim() || !startDate) {
-      toast.error("Event name and start date are required");
+    if (!eventName.trim()) {
+      toast.error("Event name is required");
       return;
     }
     mutation.mutate({
       event_name: eventName.trim(),
-      start_date: startDate,
+      start_date: startDate || null,
       end_date: endDate || null,
       time: isAllDay ? "All day" : time.trim() || "TBD",
       is_all_day: isAllDay,
@@ -117,9 +117,10 @@ function EditEventPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_is_estimated: dateIsEstimated,
+      date_label: dateLabel.trim() || null,
     });
   };
+
 
   return (
     <AppShell>
