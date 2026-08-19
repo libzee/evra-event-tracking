@@ -96,6 +96,7 @@ function Index() {
     setScreenshot(null);
     setError(null);
     setExtractError(null);
+    setNoEvent(false);
     sessionStorage.removeItem("evra:pending-screenshot");
   };
 
