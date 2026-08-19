@@ -46,10 +46,12 @@ Rules:
 - ticket_release_datetime and registration_deadline: ISO 8601 datetime strings, or null if not shown.
 - notes: useful extra info (ticket price, doors open, age restrictions, schedule, description, instructions), or null.
 - start_date / end_date: "YYYY-MM-DD". end_date only for multi-day events, otherwise null.
-- If no year is shown, infer the next plausible occurrence relative to today.
-- If only an approximate period is shown (e.g. "this fall"), pick a reasonable placeholder date and set date_is_estimated true.
+- If no year is shown but the day/month is, infer the next plausible occurrence relative to today.
+- NEVER invent an exact date. If there is no exact or confidently inferable date, set start_date and end_date to null.
+- date_label: if there is no exact date but vague timing is stated (e.g. "Coming this fall", "Summer 2027", "This winter", "Coming soon"), put that wording (or a concise version of it) in date_label. If an exact date exists, date_label must be null. If there is no date information at all, both start_date and date_label are null.
 
-Respond with ONLY a JSON object with keys: event_name, start_date, end_date, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes, date_is_estimated.`;
+Respond with ONLY a JSON object with keys: event_name, start_date, end_date, date_label, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
+
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
