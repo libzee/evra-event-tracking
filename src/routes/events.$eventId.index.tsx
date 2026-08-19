@@ -32,15 +32,35 @@ export const Route = createFileRoute("/events/$eventId/")({
   component: EventDetail,
 });
 
-function Row({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+function Row({
+  icon,
+  label,
+  value,
+  badge,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  badge?: ReactNode;
+}) {
   return (
     <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 border-b border-border py-3.5 last:border-b-0">
       <span className="mt-0.5 text-muted-foreground">{icon}</span>
       <div className="min-w-0">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
-        <p className="mt-0.5 text-sm font-medium">{value}</p>
+        <p className="mt-0.5 text-sm font-medium">
+          {value} {badge ? <span className="align-middle">{badge}</span> : null}
+        </p>
       </div>
     </div>
+  );
+}
+
+function EstimatedBadge() {
+  return (
+    <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+      Estimated
+    </span>
   );
 }
 
@@ -93,7 +113,8 @@ function EventDetail() {
               label="Date"
               value={`${formatFullDate(event.start_date)}${
                 event.end_date ? ` – ${formatFullDate(event.end_date)}` : ""
-              }${event.date_is_estimated ? " (estimated)" : ""}`}
+              }`}
+              badge={event.date_is_estimated ? <EstimatedBadge /> : undefined}
             />
             <Row icon={<Clock className="h-4 w-4" />} label="Time" value={displayTime(event)} />
             <Row
