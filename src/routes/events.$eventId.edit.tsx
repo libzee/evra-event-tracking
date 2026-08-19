@@ -189,14 +189,24 @@ function EditEventPage() {
           </div>
 
           {!isAllDay && (
-            <Field label="Time" htmlFor="time" hint="Free text — defaults to TBD">
-              <Input
-                id="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                placeholder="7:00 PM – 11:00 PM"
-              />
-            </Field>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Start time" htmlFor="start_time" hint="Leave empty if TBD">
+                <Input
+                  id="start_time"
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </Field>
+              <Field label="End time" htmlFor="end_time" hint="Optional">
+                <Input
+                  id="end_time"
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </Field>
+            </div>
           )}
 
           <Field label="Location" htmlFor="location" hint="Defaults to TBD">
