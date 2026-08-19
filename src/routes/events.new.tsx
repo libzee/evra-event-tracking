@@ -64,7 +64,7 @@ function NewEventPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateIsEstimated, setDateIsEstimated] = useState(false);
+  const [dateLabel, setDateLabel] = useState("");
 
   const mutation = useMutation({
     mutationFn: createEvent,
@@ -78,13 +78,13 @@ function NewEventPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!eventName.trim() || !startDate) {
-      toast.error("Event name and start date are required");
+    if (!eventName.trim()) {
+      toast.error("Event name is required");
       return;
     }
     mutation.mutate({
       event_name: eventName.trim(),
-      start_date: startDate,
+      start_date: startDate || null,
       end_date: endDate || null,
       time: isAllDay ? "All day" : time.trim() || "TBD",
       is_all_day: isAllDay,
@@ -94,9 +94,10 @@ function NewEventPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_is_estimated: dateIsEstimated,
+      date_label: dateLabel.trim() || null,
     });
   };
+
 
   return (
     <AppShell>
@@ -110,8 +111,9 @@ function NewEventPage() {
 
       <h1 className="mt-4 text-2xl font-semibold tracking-tight">Add an event</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Only the name and start date are required — fill in the rest whenever you know it.
+        Only the name is required — fill in the rest whenever you know it.
       </p>
+
 
       <form onSubmit={onSubmit} className="mt-6 space-y-5">
         <Field label="Event name" htmlFor="event_name">
@@ -125,15 +127,15 @@ function NewEventPage() {
         </Field>
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Start date" htmlFor="start_date">
+          <Field label="Start date" htmlFor="start_date" hint="Leave empty if the date is TBD">
             <Input
               id="start_date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              required
             />
           </Field>
+
           <Field label="End date" htmlFor="end_date" hint="Optional">
             <Input
               id="end_date"
@@ -201,17 +203,19 @@ function NewEventPage() {
           />
         </Field>
 
-        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3">
-          <div>
-            <p className="text-sm font-medium">Date is estimated</p>
-            <p className="text-xs text-muted-foreground">Mark if you're not sure yet</p>
-          </div>
-          <Switch
-            checked={dateIsEstimated}
-            onCheckedChange={setDateIsEstimated}
-            aria-label="Date is estimated"
+        <Field
+          label="Date label"
+          htmlFor="date_label"
+          hint="Optional — vague timing like “Coming this fall”"
+        >
+          <Input
+            id="date_label"
+            value={dateLabel}
+            onChange={(e) => setDateLabel(e.target.value)}
+            placeholder="Coming this fall"
           />
-        </div>
+        </Field>
+
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <Button type="submit" size="lg" disabled={mutation.isPending}>

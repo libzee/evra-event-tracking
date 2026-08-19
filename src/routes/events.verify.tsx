@@ -69,7 +69,7 @@ function VerifyPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateIsEstimated, setDateIsEstimated] = useState(false);
+  const [dateLabel, setDateLabel] = useState("");
 
   useEffect(() => {
     const shot = sessionStorage.getItem("evra:pending-screenshot");
@@ -97,7 +97,7 @@ function VerifyPage() {
       setTicketRelease(toDatetimeLocal(e.ticket_release_datetime));
       setRegistrationDeadline(toDatetimeLocal(e.registration_deadline));
       setNotes(e.notes ?? "");
-      setDateIsEstimated(Boolean(e.date_is_estimated));
+      setDateLabel(e.date_label ?? "");
     } catch {
       toast.error("Couldn't read the extracted details.");
       navigate({ to: "/" });
@@ -120,13 +120,13 @@ function VerifyPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!eventName.trim() || !startDate) {
-      toast.error("Event name and start date are required");
+    if (!eventName.trim()) {
+      toast.error("Event name is required");
       return;
     }
     mutation.mutate({
       event_name: eventName.trim(),
-      start_date: startDate,
+      start_date: startDate || null,
       end_date: endDate || null,
       time: isAllDay ? "All day" : time.trim() || "TBD",
       is_all_day: isAllDay,
@@ -136,10 +136,11 @@ function VerifyPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_is_estimated: dateIsEstimated,
+      date_label: dateLabel.trim() || null,
       screenshot_url: screenshotUrl,
     });
   };
+
 
   const cancel = () => {
     sessionStorage.removeItem("evra:pending-extraction");
@@ -186,55 +187,30 @@ function VerifyPage() {
           />
         </Field>
 
-        {dateIsEstimated ? (
-          <div className="space-y-4 rounded-2xl border border-brand/25 bg-brand-soft/10 p-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-accent-foreground">Estimated date</p>
-              <p className="text-xs text-muted-foreground">
-                This date was estimated from the event announcement. Please confirm or edit it before saving.
-              </p>
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Start date" htmlFor="start_date">
-                <Input
-                  id="start_date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  required
-                />
-              </Field>
-              <Field label="End date" htmlFor="end_date" hint="Multi-day events only">
-                <Input
-                  id="end_date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </Field>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Start date" htmlFor="start_date">
-              <Input
-                id="start_date"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-            </Field>
-            <Field label="End date" htmlFor="end_date" hint="Multi-day events only">
-              <Input
-                id="end_date"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </Field>
-          </div>
-        )}
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field
+            label="Start date"
+            htmlFor="start_date"
+            hint={startDate ? "" : "TBD — add an exact date if you know it"}
+          >
+
+            <Input
+              id="start_date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </Field>
+          <Field label="End date" htmlFor="end_date" hint="Multi-day events only">
+            <Input
+              id="end_date"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </Field>
+        </div>
+
 
         <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3">
           <div>
@@ -282,17 +258,19 @@ function VerifyPage() {
           />
         </Field>
 
-        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3">
-          <div>
-            <p className="text-sm font-medium">Date is estimated</p>
-            <p className="text-xs text-muted-foreground">The screenshot wasn't specific</p>
-          </div>
-          <Switch
-            checked={dateIsEstimated}
-            onCheckedChange={setDateIsEstimated}
-            aria-label="Date is estimated"
+        <Field
+          label="Date label"
+          htmlFor="date_label"
+          hint="Vague timing from the screenshot, e.g. “Coming this fall”"
+        >
+          <Input
+            id="date_label"
+            value={dateLabel}
+            onChange={(e) => setDateLabel(e.target.value)}
+            placeholder="Coming this fall"
           />
-        </div>
+        </Field>
+
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <Button type="submit" size="lg" disabled={mutation.isPending}>

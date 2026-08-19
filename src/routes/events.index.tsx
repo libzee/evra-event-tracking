@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
 import { EventCard } from "@/components/EventCard";
-import { eventsQueryOptions, groupByMonth, pastEvents, upcomingEvents } from "@/lib/events";
+import {
+  eventsQueryOptions,
+  groupByMonth,
+  pastEvents,
+  undatedEvents,
+  upcomingEvents,
+} from "@/lib/events";
+
 
 export const Route = createFileRoute("/events/")({
   head: () => ({
@@ -27,7 +34,9 @@ export const Route = createFileRoute("/events/")({
 function EventsPage() {
   const { data: events = [], isLoading } = useQuery(eventsQueryOptions);
   const groups = groupByMonth(upcomingEvents(events));
+  const undated = undatedEvents(events);
   const past = pastEvents(events);
+
 
   return (
     <AppShell>
@@ -55,6 +64,20 @@ function EventsPage() {
           </section>
         ))}
       </div>
+
+      {undated.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+            Date TBD
+          </h2>
+          <div className="mt-3 space-y-3">
+            {undated.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </section>
+      )}
+
 
       {past.length > 0 && (
         <section className="mt-12 border-t border-border pt-8">

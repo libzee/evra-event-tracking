@@ -69,20 +69,31 @@ const startOfToday = () => {
   return d;
 };
 
-export const isPast = (e: EvraEvent) => parseDate(e.end_date ?? e.start_date) < startOfToday();
+/** An event with no confirmed start date. */
+export const isUndated = (e: EvraEvent) => !e.start_date;
+
+export const isPast = (e: EvraEvent) => {
+  const date = e.end_date ?? e.start_date;
+  if (!date) return false;
+  return parseDate(date) < startOfToday();
+};
 
 export const upcomingEvents = (events: EvraEvent[]) =>
   events
-    .filter((e) => !isPast(e))
-    .sort((a, b) => +parseDate(a.start_date) - +parseDate(b.start_date));
+    .filter((e) => !isUndated(e) && !isPast(e))
+    .sort((a, b) => +parseDate(a.start_date!) - +parseDate(b.start_date!));
+
+export const undatedEvents = (events: EvraEvent[]) =>
+  events.filter(isUndated).sort((a, b) => a.event_name.localeCompare(b.event_name));
 
 export const pastEvents = (events: EvraEvent[]) =>
-  events.filter(isPast).sort((a, b) => +parseDate(b.start_date) - +parseDate(a.start_date));
+  events.filter(isPast).sort((a, b) => +parseDate(b.start_date!) - +parseDate(a.start_date!));
 
 export const groupByMonth = (events: EvraEvent[]) => {
   const groups: { key: string; label: string; events: EvraEvent[] }[] = [];
   for (const e of events) {
-    const d = parseDate(e.start_date);
+    const d = parseDate(e.start_date!);
+
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     const label = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
     let g = groups.find((x) => x.key === key);
@@ -111,7 +122,9 @@ const shortMonth = (date: string) =>
  * Compact date badge for an event: SEP 12 / SEP 12–15.
  */
 export const eventDateLabel = (e: EvraEvent) => {
+  if (!e.start_date) return "TBD";
   const start = e.start_date.slice(0, 10);
+
   const end = e.end_date?.slice(0, 10);
   const isRange = !!end && end !== start;
 
@@ -129,7 +142,9 @@ export const eventDateLabel = (e: EvraEvent) => {
  * TODAY / TOMORROW indicator for an event, or null.
  */
 export const eventUrgencyLabel = (e: EvraEvent) => {
+  if (!e.start_date) return null;
   const start = e.start_date.slice(0, 10);
+
   const diff = daysFromToday(start);
   if (diff === 0) return "TODAY";
   if (diff === 1) return "TOMORROW";
@@ -164,9 +179,10 @@ export const ticketStatus = (e: EvraEvent, now = new Date()) => {
     const deadline = new Date(e.registration_deadline);
     if (now >= deadline) return null;
   } else {
-    const eventEnd = endOfDay(e.end_date ?? e.start_date);
-    if (now >= eventEnd) return null;
+    const date = e.end_date ?? e.start_date;
+    if (date && now >= endOfDay(date)) return null;
   }
+
 
   return "Tickets are live";
 };
