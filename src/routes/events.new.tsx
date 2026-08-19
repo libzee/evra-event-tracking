@@ -126,15 +126,15 @@ function NewEventPage() {
         </Field>
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Start date" htmlFor="start_date">
+          <Field label="Start date" htmlFor="start_date" hint="Leave empty if the date is TBD">
             <Input
               id="start_date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              required
             />
           </Field>
+
           <Field label="End date" htmlFor="end_date" hint="Optional">
             <Input
               id="end_date"
