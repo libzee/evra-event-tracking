@@ -65,6 +65,20 @@ function EventsPage() {
         ))}
       </div>
 
+      {undated.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+            Date TBD
+          </h2>
+          <div className="mt-3 space-y-3">
+            {undated.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </section>
+      )}
+
+
       {past.length > 0 && (
         <section className="mt-12 border-t border-border pt-8">
           <h2 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
