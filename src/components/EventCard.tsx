@@ -33,10 +33,15 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
           </span>
         )}
       </div>
-      <div className="grid min-h-14 w-16 shrink-0 place-items-center rounded-xl bg-accent px-2 py-2 text-center text-accent-foreground">
+      <div className="flex min-h-14 w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-accent px-2 py-2 text-center text-accent-foreground">
         <span className="text-[0.7rem] font-semibold uppercase leading-tight tracking-widest">
           {eventDateLabel(event)}
         </span>
+        {event.date_is_estimated && (
+          <span className="mt-0.5 text-[0.55rem] font-medium uppercase tracking-wider text-muted-foreground">
+            Estimated
+          </span>
+        )}
       </div>
       <div className="min-w-0 md:pr-14">
         <h3 className="truncate text-base font-semibold">{event.event_name}</h3>
