@@ -44,11 +44,13 @@ function Row({
   sub?: string | null;
 }) {
   return (
-    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 border-b border-border py-3.5 last:border-b-0">
+    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3.5 border-b border-border/70 py-4 last:border-b-0">
       <span className="mt-0.5 text-muted-foreground">{icon}</span>
       <div className="min-w-0">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
-        <p className="mt-0.5 text-sm font-medium">{value}</p>
+        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          {label}
+        </p>
+        <p className="mt-1 text-[0.95rem] font-medium leading-snug">{value}</p>
         {sub ? <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p> : null}
       </div>
     </div>
