@@ -283,17 +283,19 @@ function VerifyPage() {
           />
         </Field>
 
-        <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3">
-          <div>
-            <p className="text-sm font-medium">Date is estimated</p>
-            <p className="text-xs text-muted-foreground">The screenshot wasn't specific</p>
-          </div>
-          <Switch
-            checked={dateIsEstimated}
-            onCheckedChange={setDateIsEstimated}
-            aria-label="Date is estimated"
+        <Field
+          label="Date label"
+          htmlFor="date_label"
+          hint="Vague timing from the screenshot, e.g. “Coming this fall”"
+        >
+          <Input
+            id="date_label"
+            value={dateLabel}
+            onChange={(e) => setDateLabel(e.target.value)}
+            placeholder="Coming this fall"
           />
-        </div>
+        </Field>
+
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <Button type="submit" size="lg" disabled={mutation.isPending}>
