@@ -110,7 +110,6 @@ function EventDetail() {
                     }`
                   : "TBD"
               }
-              sub={event.start_date ? null : event.date_label}
             />
 
             <Row icon={<Clock className="h-4 w-4" />} label="Time" value={displayTime(event)} />

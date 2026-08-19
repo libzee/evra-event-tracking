@@ -10,7 +10,6 @@ export type ExtractedEvent = {
   event_name: string;
   start_date: string | null;
   end_date: string | null;
-  date_label: string | null;
   time: string;
   is_all_day: boolean;
   location: string;
@@ -48,9 +47,9 @@ Rules:
 - start_date / end_date: "YYYY-MM-DD". end_date only for multi-day events, otherwise null.
 - If no year is shown but the day/month is, infer the next plausible occurrence relative to today.
 - NEVER invent an exact date. If there is no exact or confidently inferable date, set start_date and end_date to null.
-- date_label: if there is no exact date but vague timing is stated (e.g. "Coming this fall", "Summer 2027", "This winter", "Coming soon"), put that wording (or a concise version of it) in date_label. If an exact date exists, date_label must be null. If there is no date information at all, both start_date and date_label are null.
+- If there is no exact date but vague timing is stated (e.g. "Coming this fall", "Summer 2027", "This winter", "Coming soon"), leave start_date null and preserve that wording at the start of notes.
 
-Respond with ONLY a JSON object with keys: event_name, start_date, end_date, date_label, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
+Respond with ONLY a JSON object with keys: event_name, start_date, end_date, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
 
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -98,7 +97,6 @@ Respond with ONLY a JSON object with keys: event_name, start_date, end_date, dat
       event_name: str(parsed["event_name"]) ?? "",
       start_date: startDate,
       end_date: startDate ? (str(parsed["end_date"])?.slice(0, 10) ?? null) : null,
-      date_label: startDate ? null : str(parsed["date_label"]),
       time: str(parsed["time"]) ?? "TBD",
       is_all_day: parsed["is_all_day"] === true,
       location: str(parsed["location"]) ?? "TBD",
