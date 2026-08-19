@@ -11,6 +11,7 @@ import {
 
 export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: boolean }) {
   const urgency = eventUrgencyLabel(event);
+  const status = ticketStatus(event);
   return (
     <Link
       to="/events/$eventId"
@@ -19,17 +20,24 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
         muted ? "opacity-70" : ""
       }`}
     >
-      {urgency && (
-        <span className="absolute right-3 top-3 text-[0.65rem] font-bold uppercase tracking-wider text-brand">
-          {urgency}
-        </span>
-      )}
+      <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
+        {urgency && (
+          <span className="text-[0.65rem] font-bold uppercase tracking-wider text-brand">
+            {urgency}
+          </span>
+        )}
+        {status && (
+          <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[0.65rem] font-medium text-brand">
+            {status}
+          </span>
+        )}
+      </div>
       <div className="grid min-h-14 w-16 shrink-0 place-items-center rounded-xl bg-accent px-2 py-2 text-center text-accent-foreground">
         <span className="text-[0.7rem] font-semibold uppercase leading-tight tracking-widest">
           {eventDateLabel(event)}
         </span>
       </div>
-      <div className="min-w-0">
+      <div className="min-w-0 pr-14">
         <h3 className="truncate text-base font-semibold">{event.event_name}</h3>
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1">
