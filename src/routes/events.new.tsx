@@ -111,8 +111,9 @@ function NewEventPage() {
 
       <h1 className="mt-4 text-2xl font-semibold tracking-tight">Add an event</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Only the name and start date are required — fill in the rest whenever you know it.
+        Only the name is required — fill in the rest whenever you know it.
       </p>
+
 
       <form onSubmit={onSubmit} className="mt-6 space-y-5">
         <Field label="Event name" htmlFor="event_name">
