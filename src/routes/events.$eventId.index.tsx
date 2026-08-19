@@ -114,7 +114,8 @@ function EventDetail() {
               label="Date"
               value={`${formatFullDate(event.start_date)}${
                 event.end_date ? ` – ${formatFullDate(event.end_date)}` : ""
-              }${event.date_is_estimated ? " (estimated)" : ""}`}
+              }`}
+              badge={event.date_is_estimated ? <EstimatedBadge /> : undefined}
             />
             <Row icon={<Clock className="h-4 w-4" />} label="Time" value={displayTime(event)} />
             <Row
