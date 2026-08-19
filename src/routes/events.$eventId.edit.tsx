@@ -70,7 +70,6 @@ function EditEventPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateLabel, setDateLabel] = useState("");
   const [prefilled, setPrefilled] = useState(false);
 
   useEffect(() => {
@@ -84,7 +83,6 @@ function EditEventPage() {
     setTicketRelease(toDatetimeLocal(event.ticket_release_datetime));
     setRegistrationDeadline(toDatetimeLocal(event.registration_deadline));
     setNotes(event.notes ?? "");
-    setDateLabel(event.date_label ?? "");
     setPrefilled(true);
   }, [event, prefilled]);
 
@@ -117,7 +115,6 @@ function EditEventPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_label: dateLabel.trim() || null,
     });
   };
 
@@ -235,18 +232,6 @@ function EditEventPage() {
             />
           </Field>
 
-          <Field
-            label="Date label"
-            htmlFor="date_label"
-            hint="Optional — vague timing like “Coming this fall”"
-          >
-            <Input
-              id="date_label"
-              value={dateLabel}
-              onChange={(e) => setDateLabel(e.target.value)}
-              placeholder="Coming this fall"
-            />
-          </Field>
 
 
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">

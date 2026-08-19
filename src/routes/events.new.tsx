@@ -64,7 +64,6 @@ function NewEventPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateLabel, setDateLabel] = useState("");
 
   const mutation = useMutation({
     mutationFn: createEvent,
@@ -94,7 +93,6 @@ function NewEventPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_label: dateLabel.trim() || null,
     });
   };
 
@@ -203,18 +201,6 @@ function NewEventPage() {
           />
         </Field>
 
-        <Field
-          label="Date label"
-          htmlFor="date_label"
-          hint="Optional — vague timing like “Coming this fall”"
-        >
-          <Input
-            id="date_label"
-            value={dateLabel}
-            onChange={(e) => setDateLabel(e.target.value)}
-            placeholder="Coming this fall"
-          />
-        </Field>
 
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">

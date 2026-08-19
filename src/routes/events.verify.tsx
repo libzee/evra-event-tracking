@@ -69,7 +69,6 @@ function VerifyPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateLabel, setDateLabel] = useState("");
 
   useEffect(() => {
     const shot = sessionStorage.getItem("evra:pending-screenshot");
@@ -97,7 +96,6 @@ function VerifyPage() {
       setTicketRelease(toDatetimeLocal(e.ticket_release_datetime));
       setRegistrationDeadline(toDatetimeLocal(e.registration_deadline));
       setNotes(e.notes ?? "");
-      setDateLabel(e.date_label ?? "");
     } catch {
       toast.error("Couldn't read the extracted details.");
       navigate({ to: "/" });
@@ -136,7 +134,6 @@ function VerifyPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_label: dateLabel.trim() || null,
       screenshot_url: screenshotUrl,
     });
   };
@@ -258,18 +255,6 @@ function VerifyPage() {
           />
         </Field>
 
-        <Field
-          label="Date label"
-          htmlFor="date_label"
-          hint="Vague timing from the screenshot, e.g. “Coming this fall”"
-        >
-          <Input
-            id="date_label"
-            value={dateLabel}
-            onChange={(e) => setDateLabel(e.target.value)}
-            placeholder="Coming this fall"
-          />
-        </Field>
 
 
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
