@@ -162,7 +162,13 @@ const endOfDay = (date: string) => {
  * Uses the browser's local time.
  */
 export const ticketStatus = (e: EvraEvent, now = new Date()) => {
-  if (!e.ticket_release_datetime) return null;
+  // No ticket release time, but a registration deadline means tickets are live
+  // until that deadline.
+  if (!e.ticket_release_datetime) {
+    if (!e.registration_deadline) return null;
+    const deadline = new Date(e.registration_deadline);
+    return now < deadline ? "Tickets are live" : null;
+  }
 
   const release = new Date(e.ticket_release_datetime);
   const minutesUntil = (release.getTime() - now.getTime()) / 60_000;
@@ -182,7 +188,6 @@ export const ticketStatus = (e: EvraEvent, now = new Date()) => {
     const date = e.end_date ?? e.start_date;
     if (date && now >= endOfDay(date)) return null;
   }
-
 
   return "Tickets are live";
 };
