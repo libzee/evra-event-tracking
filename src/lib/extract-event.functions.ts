@@ -92,16 +92,19 @@ Respond with ONLY a JSON object with keys: event_name, start_date, end_date, dat
     const parsed = JSON.parse(match[0]) as Record<string, unknown>;
     const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
 
+    const startDate = str(parsed["start_date"])?.slice(0, 10) ?? null;
+
     return {
       event_name: str(parsed["event_name"]) ?? "",
-      start_date: str(parsed["start_date"])?.slice(0, 10) ?? null,
-      end_date: str(parsed["end_date"])?.slice(0, 10) ?? null,
+      start_date: startDate,
+      end_date: startDate ? (str(parsed["end_date"])?.slice(0, 10) ?? null) : null,
+      date_label: startDate ? null : str(parsed["date_label"]),
       time: str(parsed["time"]) ?? "TBD",
       is_all_day: parsed["is_all_day"] === true,
       location: str(parsed["location"]) ?? "TBD",
       ticket_release_datetime: str(parsed["ticket_release_datetime"]),
       registration_deadline: str(parsed["registration_deadline"]),
       notes: str(parsed["notes"]),
-      date_is_estimated: parsed["date_is_estimated"] === true,
     };
+
   });
