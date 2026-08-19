@@ -7,6 +7,7 @@ const inputSchema = z.object({
 });
 
 export type ExtractedEvent = {
+  is_event: boolean;
   event_name: string;
   start_date: string | null;
   end_date: string | null;
@@ -38,6 +39,8 @@ export const extractEventFromScreenshot = createServerFn({ method: "POST" })
     const prompt = `You extract ONE event from a screenshot. Today's date is ${data.today}.
 
 Rules:
+- First decide is_event: true only if the screenshot contains information about a real event someone could attend, register for or save (networking event, concert, exhibition, conference, pop-up, workshop, class, festival, performance, launch/gathering). Set is_event false for inspirational quotes, ordinary social posts, articles, memes, random photos, or product ads with no event.
+- If is_event is false, set every other field to null (event_name ""), and do not explain why in notes.
 - Identify only the single most prominent event. If prominence is unclear, use the first clearly identifiable event.
 - Never invent factual information.
 - time: free text like "7:00 PM" or "7 PM - 11 PM". If unavailable, use "TBD". If the event is all day, set is_all_day true and time "All day".
@@ -49,7 +52,7 @@ Rules:
 - NEVER invent an exact date. If there is no exact or confidently inferable date, set start_date and end_date to null.
 - If there is no exact date but vague timing is stated (e.g. "Coming this fall", "Summer 2027", "This winter", "Coming soon"), leave start_date null and preserve that wording at the start of notes.
 
-Respond with ONLY a JSON object with keys: event_name, start_date, end_date, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
+Respond with ONLY a JSON object with keys: is_event, event_name, start_date, end_date, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
 
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
