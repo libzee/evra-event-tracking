@@ -5,6 +5,7 @@ import {
   displayTime,
   eventDateLabel,
   eventUrgencyLabel,
+  ticketStatus,
   type EvraEvent,
 } from "@/lib/events";
 
