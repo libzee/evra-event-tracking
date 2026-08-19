@@ -48,7 +48,7 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
       {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
@@ -176,7 +176,7 @@ function EditEventPage() {
             </Field>
           </div>
 
-          <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3">
+          <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3.5">
             <div>
               <p className="text-sm font-medium">All-day event</p>
               <p className="text-xs text-muted-foreground">No specific start time</p>
@@ -250,7 +250,7 @@ function EditEventPage() {
 
 
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-            <Button type="submit" size="lg" disabled={mutation.isPending}>
+            <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={mutation.isPending}>
               {mutation.isPending ? "Saving…" : "Save changes"}
             </Button>
             <Button
