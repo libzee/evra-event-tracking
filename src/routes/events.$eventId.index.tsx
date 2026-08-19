@@ -81,6 +81,12 @@ function EventDetail() {
             {event.event_name}
           </h1>
 
+          {status && (
+            <span className="mt-2 inline-flex w-fit items-center rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-brand">
+              {status}
+            </span>
+          )}
+
           <div className="mt-5 rounded-2xl border border-border bg-card px-4">
             <Row
               icon={<CalendarDays className="h-4 w-4" />}
