@@ -10,6 +10,7 @@ import {
   eventQueryOptions,
   formatDateTime,
   formatFullDate,
+  ticketStatus,
 } from "@/lib/events";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
@@ -48,6 +49,7 @@ function EventDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: event, isLoading } = useQuery(eventQueryOptions(eventId));
+  const status = event ? ticketStatus(event) : null;
 
   const removeEvent = useMutation({
     mutationFn: () => deleteEvent(eventId),
@@ -78,6 +80,12 @@ function EventDetail() {
           <h1 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
             {event.event_name}
           </h1>
+
+          {status && (
+            <span className="mt-2 inline-flex w-fit items-center rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-brand">
+              {status}
+            </span>
+          )}
 
           <div className="mt-5 rounded-2xl border border-border bg-card px-4">
             <Row
