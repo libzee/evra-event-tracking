@@ -64,7 +64,8 @@ function EditEventPage() {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [time, setTime] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [isAllDay, setIsAllDay] = useState(false);
   const [location, setLocation] = useState("");
   const [ticketRelease, setTicketRelease] = useState("");
