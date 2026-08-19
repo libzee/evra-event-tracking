@@ -11,7 +11,8 @@ export type ExtractedEvent = {
   event_name: string;
   start_date: string | null;
   end_date: string | null;
-  time: string;
+  start_time: string | null;
+  end_time: string | null;
   is_all_day: boolean;
   location: string;
   ticket_release_datetime: string | null;
@@ -43,7 +44,7 @@ Rules:
 - If is_event is false, set every other field to null (event_name ""), and do not explain why in notes.
 - Identify only the single most prominent event. If prominence is unclear, use the first clearly identifiable event.
 - Never invent factual information.
-- time: free text like "7:00 PM" or "7 PM - 11 PM". If unavailable, use "TBD". If the event is all day, set is_all_day true and time "All day".
+- start_time / end_time: 24-hour "HH:MM" strings (e.g. "19:00"). Use null when a time is not shown. end_time only when an end time is stated. If the event is all day, set is_all_day true and both times null.
 - location: text. If unavailable, use "TBD".
 - ticket_release_datetime and registration_deadline: ISO 8601 datetime strings, or null if not shown.
 - notes: useful extra info (ticket price, doors open, age restrictions, schedule, description, instructions), or null.
@@ -52,7 +53,7 @@ Rules:
 - NEVER invent an exact date. If there is no exact or confidently inferable date, set start_date and end_date to null.
 - If there is no exact date but vague timing is stated (e.g. "Coming this fall", "Summer 2027", "This winter", "Coming soon"), leave start_date null and preserve that wording at the start of notes.
 
-Respond with ONLY a JSON object with keys: is_event, event_name, start_date, end_date, time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
+Respond with ONLY a JSON object with keys: is_event, event_name, start_date, end_date, start_time, end_time, is_all_day, location, ticket_release_datetime, registration_deadline, notes.`;
 
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -93,6 +94,13 @@ Respond with ONLY a JSON object with keys: is_event, event_name, start_date, end
 
     const parsed = JSON.parse(match[0]) as Record<string, unknown>;
     const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+    const clock = (v: unknown) => {
+      const m = str(v)?.match(/^(\d{1,2}):(\d{2})/);
+      if (!m) return null;
+      const h = Number(m[1]);
+      if (h > 23) return null;
+      return `${h.toString().padStart(2, "0")}:${m[2]}`;
+    };
 
     const startDate = str(parsed["start_date"])?.slice(0, 10) ?? null;
 
@@ -101,7 +109,8 @@ Respond with ONLY a JSON object with keys: is_event, event_name, start_date, end
       event_name: str(parsed["event_name"]) ?? "",
       start_date: startDate,
       end_date: startDate ? (str(parsed["end_date"])?.slice(0, 10) ?? null) : null,
-      time: str(parsed["time"]) ?? "TBD",
+      start_time: clock(parsed["start_time"]),
+      end_time: clock(parsed["end_time"]),
       is_all_day: parsed["is_all_day"] === true,
       location: str(parsed["location"]) ?? "TBD",
       ticket_release_datetime: str(parsed["ticket_release_datetime"]),
