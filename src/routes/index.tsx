@@ -130,30 +130,54 @@ function Index() {
             className="max-h-[70vh] w-full bg-secondary object-contain"
           />
           <div className="flex flex-col gap-3 px-4 py-4">
-            {extractError && (
-              <p
-                role="alert"
-                className="rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
-              >
-                {extractError}
-              </p>
+            {noEvent ? (
+              <>
+                <div className="rounded-2xl border border-border bg-secondary/50 px-4 py-4 text-center">
+                  <p className="text-base font-medium">No event found</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    This screenshot doesn&apos;t appear to contain an event.
+                  </p>
+                </div>
+                <Button size="lg" onClick={() => inputRef.current?.click()}>
+                  <ImageUp className="h-4 w-4" />
+                  Try another screenshot
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate({ to: "/events/new" })}
+                >
+                  <PenLine className="h-4 w-4" />
+                  Add manually
+                </Button>
+              </>
+            ) : (
+              <>
+                {extractError && (
+                  <p
+                    role="alert"
+                    className="rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  >
+                    {extractError}
+                  </p>
+                )}
+                <Button size="lg" disabled={extracting} onClick={() => void handleExtract()}>
+                  {extracting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  {extracting ? "Extracting event…" : "Extract event"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={extracting}
+                  onClick={() => inputRef.current?.click()}
+                >
+                  <ImageUp className="h-4 w-4" />
+                  Replace screenshot
+                </Button>
+              </>
             )}
-            <Button size="lg" disabled={extracting} onClick={() => void handleExtract()}>
-              {extracting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
-              {extracting ? "Extracting event…" : "Extract event"}
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={extracting}
-              onClick={() => inputRef.current?.click()}
-            >
-              <ImageUp className="h-4 w-4" />
-              Replace screenshot
-            </Button>
           </div>
 
           <input
