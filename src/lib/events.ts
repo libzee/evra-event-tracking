@@ -69,20 +69,31 @@ const startOfToday = () => {
   return d;
 };
 
-export const isPast = (e: EvraEvent) => parseDate(e.end_date ?? e.start_date) < startOfToday();
+/** An event with no confirmed start date. */
+export const isUndated = (e: EvraEvent) => !e.start_date;
+
+export const isPast = (e: EvraEvent) => {
+  const date = e.end_date ?? e.start_date;
+  if (!date) return false;
+  return parseDate(date) < startOfToday();
+};
 
 export const upcomingEvents = (events: EvraEvent[]) =>
   events
-    .filter((e) => !isPast(e))
-    .sort((a, b) => +parseDate(a.start_date) - +parseDate(b.start_date));
+    .filter((e) => !isUndated(e) && !isPast(e))
+    .sort((a, b) => +parseDate(a.start_date!) - +parseDate(b.start_date!));
+
+export const undatedEvents = (events: EvraEvent[]) =>
+  events.filter(isUndated).sort((a, b) => a.event_name.localeCompare(b.event_name));
 
 export const pastEvents = (events: EvraEvent[]) =>
-  events.filter(isPast).sort((a, b) => +parseDate(b.start_date) - +parseDate(a.start_date));
+  events.filter(isPast).sort((a, b) => +parseDate(b.start_date!) - +parseDate(a.start_date!));
 
 export const groupByMonth = (events: EvraEvent[]) => {
   const groups: { key: string; label: string; events: EvraEvent[] }[] = [];
   for (const e of events) {
-    const d = parseDate(e.start_date);
+    const d = parseDate(e.start_date!);
+
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     const label = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
     let g = groups.find((x) => x.key === key);
