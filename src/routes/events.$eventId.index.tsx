@@ -49,6 +49,7 @@ function EventDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: event, isLoading } = useQuery(eventQueryOptions(eventId));
+  const status = event ? ticketStatus(event) : null;
 
   const removeEvent = useMutation({
     mutationFn: () => deleteEvent(eventId),
