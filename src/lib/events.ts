@@ -206,7 +206,26 @@ export const formatDateTime = (iso: string | null) =>
       })
     : null;
 
-export const displayTime = (e: EvraEvent) =>
-  e.is_all_day ? "All day" : (e.time?.trim() || "TBD");
+/** Format a `HH:MM[:SS]` clock value as `7:00 PM`. */
+export const formatClock = (value: string | null | undefined) => {
+  if (!value) return null;
+  const [h, m] = value.split(":").map(Number);
+  if (h === undefined || Number.isNaN(h)) return null;
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12}:${pad2(m ?? 0)} ${h < 12 ? "AM" : "PM"}`;
+};
+
+/** Trim a stored time value to the `HH:MM` an <input type="time"> expects. */
+export const toTimeInput = (value: string | null | undefined) =>
+  value ? value.slice(0, 5) : "";
+
+export const displayTime = (e: EvraEvent) => {
+  if (e.is_all_day) return "All day";
+  const start = formatClock(e.start_time);
+  const end = formatClock(e.end_time);
+  if (start && end) return `${start} – ${end}`;
+  if (start) return start;
+  return e.time?.trim() || "TBD";
+};
 
 export const displayLocation = (e: EvraEvent) => e.location?.trim() || "TBD";
