@@ -20,7 +20,8 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
         muted ? "opacity-70" : ""
       }`}
     >
-      <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
+      {/* Desktop badges — top-right corner */}
+      <div className="absolute right-3 top-3 hidden flex-col items-end gap-1 md:flex">
         {urgency && (
           <span className="text-[0.65rem] font-bold uppercase tracking-wider text-brand">
             {urgency}
@@ -37,8 +38,21 @@ export function EventCard({ event, muted = false }: { event: EvraEvent; muted?: 
           {eventDateLabel(event)}
         </span>
       </div>
-      <div className="min-w-0 pr-14">
+      <div className="min-w-0 md:pr-14">
         <h3 className="truncate text-base font-semibold">{event.event_name}</h3>
+        {/* Mobile badges — below title, above time */}
+        <div className="mt-1.5 flex flex-wrap items-center gap-2 md:hidden">
+          {urgency && (
+            <span className="text-[0.65rem] font-bold uppercase tracking-wider text-brand">
+              {urgency}
+            </span>
+          )}
+          {status && (
+            <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[0.65rem] font-medium text-brand">
+              {status}
+            </span>
+          )}
+        </div>
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <Clock className="h-3.5 w-3.5 shrink-0" />
