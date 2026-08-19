@@ -187,55 +187,29 @@ function VerifyPage() {
           />
         </Field>
 
-        {dateIsEstimated ? (
-          <div className="space-y-4 rounded-2xl border border-brand/25 bg-brand-soft/10 p-4">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-accent-foreground">Estimated date</p>
-              <p className="text-xs text-muted-foreground">
-                This date was estimated from the event announcement. Please confirm or edit it before saving.
-              </p>
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Start date" htmlFor="start_date">
-                <Input
-                  id="start_date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  required
-                />
-              </Field>
-              <Field label="End date" htmlFor="end_date" hint="Multi-day events only">
-                <Input
-                  id="end_date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </Field>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Start date" htmlFor="start_date">
-              <Input
-                id="start_date"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-            </Field>
-            <Field label="End date" htmlFor="end_date" hint="Multi-day events only">
-              <Input
-                id="end_date"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </Field>
-          </div>
-        )}
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field
+            label="Start date"
+            htmlFor="start_date"
+            hint={startDate ? undefined : "TBD — add an exact date if you know it"}
+          >
+            <Input
+              id="start_date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </Field>
+          <Field label="End date" htmlFor="end_date" hint="Multi-day events only">
+            <Input
+              id="end_date"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </Field>
+        </div>
+
 
         <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3">
           <div>
