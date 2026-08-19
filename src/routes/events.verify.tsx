@@ -69,7 +69,7 @@ function VerifyPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateIsEstimated, setDateIsEstimated] = useState(false);
+  const [dateLabel, setDateLabel] = useState("");
 
   useEffect(() => {
     const shot = sessionStorage.getItem("evra:pending-screenshot");
@@ -97,7 +97,7 @@ function VerifyPage() {
       setTicketRelease(toDatetimeLocal(e.ticket_release_datetime));
       setRegistrationDeadline(toDatetimeLocal(e.registration_deadline));
       setNotes(e.notes ?? "");
-      setDateIsEstimated(Boolean(e.date_is_estimated));
+      setDateLabel(e.date_label ?? "");
     } catch {
       toast.error("Couldn't read the extracted details.");
       navigate({ to: "/" });
@@ -120,13 +120,13 @@ function VerifyPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!eventName.trim() || !startDate) {
-      toast.error("Event name and start date are required");
+    if (!eventName.trim()) {
+      toast.error("Event name is required");
       return;
     }
     mutation.mutate({
       event_name: eventName.trim(),
-      start_date: startDate,
+      start_date: startDate || null,
       end_date: endDate || null,
       time: isAllDay ? "All day" : time.trim() || "TBD",
       is_all_day: isAllDay,
@@ -136,10 +136,11 @@ function VerifyPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_is_estimated: dateIsEstimated,
+      date_label: dateLabel.trim() || null,
       screenshot_url: screenshotUrl,
     });
   };
+
 
   const cancel = () => {
     sessionStorage.removeItem("evra:pending-extraction");
