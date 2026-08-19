@@ -69,11 +69,17 @@ function Index() {
   const handleExtract = async () => {
     if (!screenshot) return;
     setExtractError(null);
+    setNoEvent(false);
     setExtracting(true);
     try {
       const extracted = await extractEventFromScreenshot({
         data: { imageUrl: screenshot.previewUrl, today: new Date().toISOString().slice(0, 10) },
       });
+      if (!extracted.is_event) {
+        sessionStorage.removeItem("evra:pending-extraction");
+        setNoEvent(true);
+        return;
+      }
       sessionStorage.setItem("evra:pending-extraction", JSON.stringify(extracted));
       navigate({ to: "/events/verify" });
     } catch (e) {
