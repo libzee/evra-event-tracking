@@ -136,6 +136,41 @@ export const eventUrgencyLabel = (e: EvraEvent) => {
   return null;
 };
 
+const endOfDay = (date: string) => {
+  const d = parseDate(date);
+  d.setHours(23, 59, 59, 999);
+  return d;
+};
+
+/**
+ * Live ticket status for an event, or null.
+ * Uses the browser's local time.
+ */
+export const ticketStatus = (e: EvraEvent, now = new Date()) => {
+  if (!e.ticket_release_datetime) return null;
+
+  const release = new Date(e.ticket_release_datetime);
+  const minutesUntil = (release.getTime() - now.getTime()) / 60_000;
+
+  // Before release: notify only within the last hour.
+  if (minutesUntil > 0) {
+    if (minutesUntil > 60) return null;
+    const minutes = Math.max(1, Math.ceil(minutesUntil));
+    return `Tickets open in ${minutes} min`;
+  }
+
+  // Release has passed.
+  if (e.registration_deadline) {
+    const deadline = new Date(e.registration_deadline);
+    if (now >= deadline) return null;
+  } else {
+    const eventEnd = endOfDay(e.end_date ?? e.start_date);
+    if (now >= eventEnd) return null;
+  }
+
+  return "Tickets are live";
+};
+
 export const formatFullDate = (date: string) =>
   parseDate(date).toLocaleDateString("en-US", {
     weekday: "long",
