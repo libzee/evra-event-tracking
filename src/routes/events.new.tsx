@@ -64,7 +64,7 @@ function NewEventPage() {
   const [ticketRelease, setTicketRelease] = useState("");
   const [registrationDeadline, setRegistrationDeadline] = useState("");
   const [notes, setNotes] = useState("");
-  const [dateIsEstimated, setDateIsEstimated] = useState(false);
+  const [dateLabel, setDateLabel] = useState("");
 
   const mutation = useMutation({
     mutationFn: createEvent,
@@ -78,13 +78,13 @@ function NewEventPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!eventName.trim() || !startDate) {
-      toast.error("Event name and start date are required");
+    if (!eventName.trim()) {
+      toast.error("Event name is required");
       return;
     }
     mutation.mutate({
       event_name: eventName.trim(),
-      start_date: startDate,
+      start_date: startDate || null,
       end_date: endDate || null,
       time: isAllDay ? "All day" : time.trim() || "TBD",
       is_all_day: isAllDay,
@@ -94,9 +94,10 @@ function NewEventPage() {
         ? new Date(registrationDeadline).toISOString()
         : null,
       notes: notes.trim() || null,
-      date_is_estimated: dateIsEstimated,
+      date_label: dateLabel.trim() || null,
     });
   };
+
 
   return (
     <AppShell>
