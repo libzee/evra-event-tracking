@@ -6,8 +6,6 @@ Evra is a mobile-first event tracker that turns screenshots into organised, acti
 
 I built the first version in **one day** as an experiment: *Can I take a real problem I have, scope it down to an MVP, and use AI-assisted development to ship a working product in a day?*
 
-🔗 **[Try Evra](https://evra-event-tracking.lovable.app)**
-
 ---
 
 ## The problem
